@@ -2,11 +2,14 @@ package com.example.review.service;
 
 import com.example.review.dto.request.AuthenticationRequest;
 import com.example.review.dto.request.IntrospectRequest;
+import com.example.review.dto.request.LogoutRequest;
 import com.example.review.dto.response.AuthenticationResponse;
 import com.example.review.dto.response.IntrospectResponse;
+import com.example.review.entity.InvalidatedToken;
 import com.example.review.entity.User;
 import com.example.review.exception.AppException;
 import com.example.review.exception.ErrorCode;
+import com.example.review.repository.InvalidatedTokenRepository;
 import com.example.review.repository.UserRepository;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
@@ -27,12 +30,14 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.StringJoiner;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AuthenticationService {
     UserRepository userRepository;
+    InvalidatedTokenRepository invalidatedTokenRepository;
     PasswordEncoder passwordEncoder;
 
     @NonFinal
@@ -72,7 +77,21 @@ public class AuthenticationService {
         if (!(verified && expiration.after(new Date()))) {
             throw new AppException(ErrorCode.UNAUTHENTICATED);
         }
+
+        if (invalidatedTokenRepository.existsById(jwt.getJWTClaimsSet().getJWTID()))
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
+
         return jwt;
+    }
+
+    public void logout(LogoutRequest request)
+            throws ParseException, JOSEException {
+        var signedToken = verifyToken(request.getToken(), false);
+        String jit = signedToken.getJWTClaimsSet().getJWTID();
+        Date date = signedToken.getJWTClaimsSet().getExpirationTime();
+
+        invalidatedTokenRepository.save(InvalidatedToken.builder()
+            .id(jit).expiryDate(date).build());
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
@@ -97,6 +116,7 @@ public class AuthenticationService {
                         .plus(VALIDATION_DURATION, ChronoUnit.SECONDS)
                         .toEpochMilli()))
                 .claim("scope", buildScope(user))
+                .jwtID(UUID.randomUUID().toString())
                 .build();
         Payload payload = claimsSet.toPayload();
         JWSObject object = new JWSObject(header, payload);
