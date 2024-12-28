@@ -3,6 +3,7 @@ package com.example.review.service;
 import com.example.review.dto.request.AuthenticationRequest;
 import com.example.review.dto.request.IntrospectRequest;
 import com.example.review.dto.request.LogoutRequest;
+import com.example.review.dto.request.RefreshRequest;
 import com.example.review.dto.response.AuthenticationResponse;
 import com.example.review.dto.response.IntrospectResponse;
 import com.example.review.entity.InvalidatedToken;
@@ -92,6 +93,20 @@ public class AuthenticationService {
 
         invalidatedTokenRepository.save(InvalidatedToken.builder()
             .id(jit).expiryDate(date).build());
+    }
+
+    public AuthenticationResponse refreshToken(RefreshRequest request)
+            throws ParseException, JOSEException {
+        SignedJWT signedJWT = verifyToken(request.getToken(), true);
+        String jid = signedJWT.getJWTClaimsSet().getJWTID();
+        var expiryTime = signedJWT.getJWTClaimsSet().getExpirationTime();
+        invalidatedTokenRepository.save(InvalidatedToken.builder()
+                .id(jid).expiryDate(expiryTime).build());
+        var username = signedJWT.getJWTClaimsSet().getSubject();
+        var user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        var token = generateToken(user);
+        return new AuthenticationResponse(token);
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
