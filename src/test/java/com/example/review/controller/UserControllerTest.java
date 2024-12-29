@@ -49,6 +49,7 @@ public class UserControllerTest {
                 .build();
 
         userResponse = UserResponse.builder()
+                .id("cf0600f3538b3")
                 .username("john123")
                 .firstname("John")
                 .lastname("Martha")
@@ -72,6 +73,65 @@ public class UserControllerTest {
                     .writeValueAsString(userCreateRequest)))
             .andExpect(MockMvcResultMatchers.status().isOk())
             .andExpect(MockMvcResultMatchers.jsonPath("code")
-                    .value(1000));
+                    .value(1000))
+            .andExpect(MockMvcResultMatchers.jsonPath("result.id")
+                    .value("cf0600f3538b3"));
+    }
+
+    @Test
+    void createUser_usernameInvalid_fail() throws Exception {
+        // GIVEN
+        userCreateRequest.setUsername("john");
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+
+        // WHEN, THEN
+        mvc.perform(MockMvcRequestBuilders
+                .post("/users")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(mapper.writeValueAsString(userCreateRequest)))
+            .andExpect(MockMvcResultMatchers.status().isBadRequest())
+            .andExpect(MockMvcResultMatchers.jsonPath("code")
+                    .value(1002))
+            .andExpect(MockMvcResultMatchers.jsonPath("message")
+                    .value("Username must be at least 6 characters."));
+    }
+
+    @Test
+    void createUser_passwordInvalid_fail() throws Exception {
+        // GIVEN
+        userCreateRequest.setPassword("123456");
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+
+        // WHEN, THEN
+        mvc.perform(MockMvcRequestBuilders
+                    .post("/users")
+                    .contentType(MediaType.APPLICATION_JSON_VALUE)
+                    .content(mapper.writeValueAsString(userCreateRequest)))
+            .andExpect(MockMvcResultMatchers.status().isBadRequest())
+            .andExpect(MockMvcResultMatchers.jsonPath("code")
+                    .value(1003))
+            .andExpect(MockMvcResultMatchers.jsonPath("message")
+                    .value("Password must be at least 8 characters."));
+    }
+
+    @Test
+    void createUser_dobInvalid_fail() throws Exception {
+        // GIVEN
+        userCreateRequest.setDob(LocalDate.now());
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+
+        // WHEN, THEN
+        mvc.perform(MockMvcRequestBuilders
+                        .post("/users")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(mapper.writeValueAsString(userCreateRequest)))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("code")
+                        .value(1004))
+                .andExpect(MockMvcResultMatchers.jsonPath("message")
+                        .value("Must at least 18 age."));
     }
 }

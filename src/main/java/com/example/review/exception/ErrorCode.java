@@ -13,7 +13,7 @@ public enum ErrorCode {
     INVALID_KEY(1001, "Invalid message key.", HttpStatus.BAD_REQUEST),
     USERNAME_INVALID(1002, "Username must be at least {min} characters.", HttpStatus.BAD_REQUEST),
     PASSWORD_INVALID(1003, "Password must be at least {min} characters.", HttpStatus.BAD_REQUEST),
-    DOB_INVALID(1004, "Must at least min age.", HttpStatus.BAD_REQUEST),
+    DOB_INVALID(1004, "Must at least {min} age.", HttpStatus.BAD_REQUEST),
     USER_EXISTED(1005, "User existed", HttpStatus.BAD_REQUEST),
     USER_NOT_EXISTED(1006, "User not existed", HttpStatus.BAD_REQUEST),
     ROLE_EXISTED(1007, "Role existed", HttpStatus.BAD_REQUEST),
