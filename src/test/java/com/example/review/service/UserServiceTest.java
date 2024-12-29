@@ -5,11 +5,11 @@ import com.example.review.dto.response.UserResponse;
 import com.example.review.entity.User;
 import com.example.review.exception.AppException;
 import com.example.review.repository.UserRepository;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.time.LocalDate;
@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static  org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
+@TestPropertySource("/test.properties")
 public class UserServiceTest {
     @Autowired
     private UserService userService;
