@@ -9,10 +9,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -36,7 +38,7 @@ public class UserServiceTest {
     @BeforeEach
     void initData() {
         userCreateRequest = UserCreateRequest.builder()
-                .username("john123")
+                .username("j    ohn123")
                 .firstname("John")
                 .lastname("Martha")
                 .password("12345678")
@@ -102,5 +104,48 @@ public class UserServiceTest {
                 .isEqualTo(1005);
         assertThat(exception.getErrorCode().getMessage())
                 .isEqualTo("User existed");
+    }
+
+    @Test
+    public void createUser_emailExisted_fail() {
+        when(userRepository.existsByEmail(anyString())).thenReturn(true);
+
+        var exception = assertThrows(AppException.class,
+                () -> userService.create(userCreateRequest));
+
+        assertThat(exception.getErrorCode().getCode())
+                .isEqualTo(1005);
+        assertThat(exception.getErrorCode().getMessage())
+                .isEqualTo("User existed");
+    }
+
+    @Test
+    @WithMockUser(username = "john123")
+    public void getMyInfo_valid_success() {
+        when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(user));
+        var response = userService.getMyInfo();
+
+        assertThat(response.getId()).isEqualTo("cf0600f3538b3");
+        assertThat(response.getUsername()).isEqualTo("john123");
+        assertThat(response.getFirstname()).isEqualTo("John");
+        assertThat(response.getLastname()).isEqualTo("Martha");
+        assertThat(response.getDob())
+                .isEqualTo(LocalDate.of(2004, 12, 12));
+        assertThat(response.getEmail()).isEqualTo("john@gmail.com");
+        assertThat(response.getPhone()).isEqualTo("0905601223");
+        assertThat(response.getAddress()).isEqualTo("Mieu Bong");
+    }
+
+    @Test
+    @WithMockUser(username = "john123")
+    public void getMyInfo_userNotFound_success() {
+        when(userRepository.findByUsername(anyString())).thenReturn(Optional.empty());
+        var exception = assertThrows(AppException.class,
+                () -> userService.getMyInfo());
+
+        assertThat(exception.getErrorCode().getCode())
+                .isEqualTo(1006 );
+        assertThat(exception.getErrorCode().getMessage())
+                .isEqualTo("User not existed");
     }
 }
