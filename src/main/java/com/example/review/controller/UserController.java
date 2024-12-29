@@ -9,10 +9,12 @@ import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/users")
@@ -22,6 +24,7 @@ public class UserController {
 
     @PostMapping
     public ApiResponse<UserResponse> create(@RequestBody @Valid UserCreateRequest request) {
+        log.info("User created: {}", request);
         return ApiResponse.<UserResponse>builder()
                 .result(userService.create(request))
                 .build();
@@ -42,7 +45,8 @@ public class UserController {
     }
 
     @PutMapping("/{username}")
-    public ApiResponse<UserResponse> update(@PathVariable String username, @RequestBody @Valid UserUpdateRequest request) {
+    public ApiResponse<UserResponse> update(@PathVariable String username,
+                                            @RequestBody @Valid UserUpdateRequest request) {
         return ApiResponse.<UserResponse>builder()
                 .result(userService.update(username, request))
                 .build();

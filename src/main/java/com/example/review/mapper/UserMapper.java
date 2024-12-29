@@ -38,6 +38,8 @@ public class UserMapper {
                 .username(user.getUsername())
                 .email(user.getEmail())
                 .dob(user.getDob())
+                .address(user.getAddress())
+                .phone(user.getPhone())
                 .lastname(user.getLastname())
                 .firstname(user.getFirstname())
                 .active(user.isActive())

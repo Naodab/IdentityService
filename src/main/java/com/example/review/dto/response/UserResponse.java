@@ -18,5 +18,7 @@ public class UserResponse {
     String firstname;
     String lastname;
     LocalDate dob;
+    String address;
+    String phone;
     boolean active;
 }
