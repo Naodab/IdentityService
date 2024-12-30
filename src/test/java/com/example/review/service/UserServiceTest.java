@@ -1,10 +1,14 @@
 package com.example.review.service;
 
-import com.example.review.dto.request.UserCreateRequest;
-import com.example.review.dto.response.UserResponse;
-import com.example.review.entity.User;
-import com.example.review.exception.AppException;
-import com.example.review.repository.UserRepository;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
+
+import java.time.LocalDate;
+import java.util.Optional;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,14 +17,11 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
-import java.time.LocalDate;
-import java.util.Optional;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static  org.assertj.core.api.Assertions.assertThat;
+import com.example.review.dto.request.UserCreateRequest;
+import com.example.review.dto.response.UserResponse;
+import com.example.review.entity.User;
+import com.example.review.exception.AppException;
+import com.example.review.repository.UserRepository;
 
 @SpringBootTest
 @TestPropertySource("/test.properties")
@@ -86,8 +87,7 @@ public class UserServiceTest {
         assertThat(response.getUsername()).isEqualTo("john123");
         assertThat(response.getFirstname()).isEqualTo("John");
         assertThat(response.getLastname()).isEqualTo("Martha");
-        assertThat(response.getDob())
-                .isEqualTo(LocalDate.of(2004, 12, 12));
+        assertThat(response.getDob()).isEqualTo(LocalDate.of(2004, 12, 12));
         assertThat(response.getEmail()).isEqualTo("john@gmail.com");
         assertThat(response.getPhone()).isEqualTo("0905601223");
         assertThat(response.getAddress()).isEqualTo("Mieu Bong");
@@ -97,26 +97,20 @@ public class UserServiceTest {
     public void createUser_userExisted_fail() {
         when(userRepository.existsByUsername(anyString())).thenReturn(true);
 
-        var exception = assertThrows(AppException.class,
-                () -> userService.create(userCreateRequest));
+        var exception = assertThrows(AppException.class, () -> userService.create(userCreateRequest));
 
-        assertThat(exception.getErrorCode().getCode())
-                .isEqualTo(1005);
-        assertThat(exception.getErrorCode().getMessage())
-                .isEqualTo("User existed");
+        assertThat(exception.getErrorCode().getCode()).isEqualTo(1005);
+        assertThat(exception.getErrorCode().getMessage()).isEqualTo("User existed");
     }
 
     @Test
     public void createUser_emailExisted_fail() {
         when(userRepository.existsByEmail(anyString())).thenReturn(true);
 
-        var exception = assertThrows(AppException.class,
-                () -> userService.create(userCreateRequest));
+        var exception = assertThrows(AppException.class, () -> userService.create(userCreateRequest));
 
-        assertThat(exception.getErrorCode().getCode())
-                .isEqualTo(1005);
-        assertThat(exception.getErrorCode().getMessage())
-                .isEqualTo("User existed");
+        assertThat(exception.getErrorCode().getCode()).isEqualTo(1005);
+        assertThat(exception.getErrorCode().getMessage()).isEqualTo("User existed");
     }
 
     @Test
@@ -129,8 +123,7 @@ public class UserServiceTest {
         assertThat(response.getUsername()).isEqualTo("john123");
         assertThat(response.getFirstname()).isEqualTo("John");
         assertThat(response.getLastname()).isEqualTo("Martha");
-        assertThat(response.getDob())
-                .isEqualTo(LocalDate.of(2004, 12, 12));
+        assertThat(response.getDob()).isEqualTo(LocalDate.of(2004, 12, 12));
         assertThat(response.getEmail()).isEqualTo("john@gmail.com");
         assertThat(response.getPhone()).isEqualTo("0905601223");
         assertThat(response.getAddress()).isEqualTo("Mieu Bong");
@@ -140,12 +133,9 @@ public class UserServiceTest {
     @WithMockUser(username = "john123")
     public void getMyInfo_userNotFound_success() {
         when(userRepository.findByUsername(anyString())).thenReturn(Optional.empty());
-        var exception = assertThrows(AppException.class,
-                () -> userService.getMyInfo());
+        var exception = assertThrows(AppException.class, () -> userService.getMyInfo());
 
-        assertThat(exception.getErrorCode().getCode())
-                .isEqualTo(1006 );
-        assertThat(exception.getErrorCode().getMessage())
-                .isEqualTo("User not existed");
+        assertThat(exception.getErrorCode().getCode()).isEqualTo(1006);
+        assertThat(exception.getErrorCode().getMessage()).isEqualTo("User not existed");
     }
 }

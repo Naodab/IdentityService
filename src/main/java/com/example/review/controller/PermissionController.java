@@ -1,15 +1,17 @@
 package com.example.review.controller;
 
+import java.util.List;
+
+import org.springframework.web.bind.annotation.*;
+
 import com.example.review.dto.request.PermissionRequest;
 import com.example.review.dto.response.ApiResponse;
 import com.example.review.dto.response.PermissionResponse;
 import com.example.review.service.PermissionService;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor

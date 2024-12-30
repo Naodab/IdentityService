@@ -1,10 +1,11 @@
 package com.example.review.exception;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -20,7 +21,8 @@ public enum ErrorCode {
     ROLE_NOTE_EXISTED(1008, "Role not existed", HttpStatus.BAD_REQUEST),
     PERMISSION_EXISTED(1009, "Permission existed", HttpStatus.BAD_REQUEST),
     PERMISSION_NOT_EXISTED(1010, "Permission not existed", HttpStatus.BAD_REQUEST),
-    UNAUTHENTICATED(1011, "Authentication failed", HttpStatus.UNAUTHORIZED),;
+    UNAUTHENTICATED(1011, "Authentication failed", HttpStatus.UNAUTHORIZED),
+    ;
 
     final int code;
     final String message;

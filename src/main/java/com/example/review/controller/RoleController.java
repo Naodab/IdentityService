@@ -1,15 +1,17 @@
 package com.example.review.controller;
 
+import java.util.List;
+
+import org.springframework.web.bind.annotation.*;
+
 import com.example.review.dto.request.RoleRequest;
 import com.example.review.dto.response.ApiResponse;
 import com.example.review.dto.response.RoleResponse;
 import com.example.review.service.RoleService;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -34,9 +36,7 @@ public class RoleController {
 
     @GetMapping("/{name}")
     public ApiResponse<RoleResponse> get(@PathVariable String name) {
-        return ApiResponse.<RoleResponse>builder()
-                .result(roleService.get(name))
-                .build();
+        return ApiResponse.<RoleResponse>builder().result(roleService.get(name)).build();
     }
 
     @DeleteMapping("/{name}")

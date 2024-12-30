@@ -1,5 +1,13 @@
 package com.example.review.service;
 
+import java.util.List;
+
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
 import com.example.review.dto.request.UserCreateRequest;
 import com.example.review.dto.request.UserUpdateRequest;
 import com.example.review.dto.response.UserResponse;
@@ -8,17 +16,11 @@ import com.example.review.exception.AppException;
 import com.example.review.exception.ErrorCode;
 import com.example.review.mapper.UserMapper;
 import com.example.review.repository.UserRepository;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.access.prepost.PostAuthorize;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Slf4j
 @Service
@@ -43,29 +45,27 @@ public class UserService {
 
     @PreAuthorize("hasRole('ADMIN')")
     public List<UserResponse> getAll() {
-        return userRepository.findAll()
-                .stream()
-                .map(userMapper::toUserResponse)
-                .toList();
+        return userRepository.findAll().stream().map(userMapper::toUserResponse).toList();
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     public UserResponse getByUsername(String username) {
-        return userMapper.toUserResponse(userRepository.findByUsername(username)
+        return userMapper.toUserResponse(userRepository
+                .findByUsername(username)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED)));
     }
 
     public UserResponse getMyInfo() {
-        var username = SecurityContextHolder.getContext()
-                .getAuthentication().getName();
-        return userMapper.toUserResponse(userRepository.findByUsername(username)
+        var username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userMapper.toUserResponse(userRepository
+                .findByUsername(username)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED)));
     }
 
     @PostAuthorize("returnObject.username==authentication.name")
     public UserResponse update(String username, UserUpdateRequest request) {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        User user =
+                userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         user = userMapper.updateUser(user, request);
         if (request.getPassword() != null) {
             user.setPassword(passwordEncoder.encode(request.getPassword()));

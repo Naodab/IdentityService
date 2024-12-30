@@ -1,9 +1,10 @@
 package com.example.review.mapper;
 
+import org.springframework.stereotype.Component;
+
 import com.example.review.dto.request.RoleRequest;
 import com.example.review.dto.response.RoleResponse;
 import com.example.review.entity.Role;
-import org.springframework.stereotype.Component;
 
 @Component
 public class RoleMapper {

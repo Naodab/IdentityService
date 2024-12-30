@@ -1,10 +1,11 @@
 package com.example.review.mapper;
 
+import org.springframework.stereotype.Component;
+
 import com.example.review.dto.request.UserCreateRequest;
 import com.example.review.dto.request.UserUpdateRequest;
 import com.example.review.dto.response.UserResponse;
 import com.example.review.entity.User;
-import org.springframework.stereotype.Component;
 
 @Component
 public class UserMapper {

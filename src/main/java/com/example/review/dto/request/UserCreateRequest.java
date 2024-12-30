@@ -1,11 +1,13 @@
 package com.example.review.dto.request;
 
-import com.example.review.validator.DobConstraint;
+import java.time.LocalDate;
+
 import jakarta.validation.constraints.Size;
+
+import com.example.review.validator.DobConstraint;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -19,6 +21,7 @@ public class UserCreateRequest {
 
     @Size(min = 8, message = "PASSWORD_INVALID")
     String password;
+
     String email;
     String firstname;
     String lastname;

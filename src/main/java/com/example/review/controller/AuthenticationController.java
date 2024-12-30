@@ -1,5 +1,12 @@
 package com.example.review.controller;
 
+import java.text.ParseException;
+
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.example.review.dto.request.AuthenticationRequest;
 import com.example.review.dto.request.IntrospectRequest;
 import com.example.review.dto.request.LogoutRequest;
@@ -9,15 +16,10 @@ import com.example.review.dto.response.AuthenticationResponse;
 import com.example.review.dto.response.IntrospectResponse;
 import com.example.review.service.AuthenticationService;
 import com.nimbusds.jose.JOSEException;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.text.ParseException;
 
 @RestController
 @RequiredArgsConstructor
@@ -44,14 +46,13 @@ public class AuthenticationController {
     @PostMapping("/logout")
     public ApiResponse<?> logout(@RequestBody LogoutRequest request) throws ParseException, JOSEException {
         authenticationService.logout(request);
-        return ApiResponse.builder()
-                .build();
+        return ApiResponse.builder().build();
     }
 
     @PostMapping("/refresh")
     public ApiResponse<AuthenticationResponse> refresh(@RequestBody RefreshRequest request)
             throws ParseException, JOSEException {
-        return  ApiResponse.<AuthenticationResponse>builder()
+        return ApiResponse.<AuthenticationResponse>builder()
                 .result(authenticationService.refreshToken(request))
                 .build();
     }

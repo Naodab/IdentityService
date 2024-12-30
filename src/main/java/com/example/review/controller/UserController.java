@@ -1,18 +1,21 @@
 package com.example.review.controller;
 
+import java.util.List;
+
+import jakarta.validation.Valid;
+
+import org.springframework.web.bind.annotation.*;
+
 import com.example.review.dto.request.UserCreateRequest;
 import com.example.review.dto.request.UserUpdateRequest;
 import com.example.review.dto.response.ApiResponse;
 import com.example.review.dto.response.UserResponse;
 import com.example.review.service.UserService;
-import jakarta.validation.Valid;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Slf4j
 @RestController
@@ -45,8 +48,8 @@ public class UserController {
     }
 
     @PutMapping("/{username}")
-    public ApiResponse<UserResponse> update(@PathVariable String username,
-                                            @RequestBody @Valid UserUpdateRequest request) {
+    public ApiResponse<UserResponse> update(
+            @PathVariable String username, @RequestBody @Valid UserUpdateRequest request) {
         return ApiResponse.<UserResponse>builder()
                 .result(userService.update(username, request))
                 .build();

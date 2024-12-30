@@ -1,12 +1,12 @@
 package com.example.review.entity;
 
+import java.time.LocalDate;
+import java.util.Set;
+
 import jakarta.persistence.*;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Set;
 
 @Entity
 @Getter
@@ -22,10 +22,12 @@ public class User {
 
     @Column(unique = true, nullable = false)
     String username;
+
     String password;
 
     @Column(unique = true, nullable = false)
     String email;
+
     String firstname;
     String lastname;
     String phone;

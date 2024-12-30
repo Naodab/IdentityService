@@ -1,9 +1,10 @@
 package com.example.review.mapper;
 
+import org.springframework.stereotype.Component;
+
 import com.example.review.dto.request.PermissionRequest;
 import com.example.review.dto.response.PermissionResponse;
 import com.example.review.entity.Permission;
-import org.springframework.stereotype.Component;
 
 @Component
 public class PermissionMapper {

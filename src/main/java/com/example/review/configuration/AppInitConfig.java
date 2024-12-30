@@ -1,21 +1,23 @@
 package com.example.review.configuration;
 
-import com.example.review.constant.PredefinedRole;
-import com.example.review.entity.Role;
-import com.example.review.entity.User;
-import com.example.review.repository.RoleRepository;
-import com.example.review.repository.UserRepository;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
+import java.util.HashSet;
+
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.HashSet;
+import com.example.review.constant.PredefinedRole;
+import com.example.review.entity.Role;
+import com.example.review.entity.User;
+import com.example.review.repository.RoleRepository;
+import com.example.review.repository.UserRepository;
+
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Configuration
@@ -28,11 +30,11 @@ public class AppInitConfig {
     PasswordEncoder encoder;
 
     @Bean
-    @ConditionalOnProperty(prefix = "spring",
+    @ConditionalOnProperty(
+            prefix = "spring",
             value = "datasource.driverClassName",
             havingValue = "com.mysql.cj.jdbc.Driver")
-    ApplicationRunner init(UserRepository userRepository,
-                           RoleRepository roleRepository) {
+    ApplicationRunner init(UserRepository userRepository, RoleRepository roleRepository) {
         return args -> {
             if (!userRepository.existsByUsername("admin")) {
                 roleRepository.save(Role.builder()
