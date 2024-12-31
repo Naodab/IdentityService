@@ -36,7 +36,7 @@ public class AppInitConfig {
             havingValue = "com.mysql.cj.jdbc.Driver")
     ApplicationRunner init(UserRepository userRepository, RoleRepository roleRepository) {
         return args -> {
-            if (!userRepository.existsByUsername("admin")) {
+            if (!userRepository.existsByUsername(ADMIN_USERNAME)) {
                 roleRepository.save(Role.builder()
                         .name(PredefinedRole.ROLE_USER)
                         .description("role user")

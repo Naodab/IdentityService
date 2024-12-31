@@ -22,7 +22,7 @@ import lombok.experimental.NonFinal;
 public class JwtCustomDecoder implements JwtDecoder {
     @NonFinal
     @Value("${jwt.signerKey}")
-    protected String SIGNER_KEY;
+    protected String signalKey;
 
     @Autowired
     private AuthenticationService authenticationService;
@@ -41,7 +41,7 @@ public class JwtCustomDecoder implements JwtDecoder {
             throw new JwtException(e.getMessage());
         }
         if (Objects.isNull(nimbusJwtDecoder)) {
-            SecretKeySpec spec = new SecretKeySpec(SIGNER_KEY.getBytes(), "HS512");
+            SecretKeySpec spec = new SecretKeySpec(signalKey.getBytes(), "HS512");
             nimbusJwtDecoder = NimbusJwtDecoder.withSecretKey(spec)
                     .macAlgorithm(MacAlgorithm.HS512)
                     .build();
